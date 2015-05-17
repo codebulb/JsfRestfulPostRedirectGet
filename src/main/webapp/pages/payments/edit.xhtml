@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:o="http://omnifaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>#{empty paymentController.currentEntity.id ? 'Create' : 'Edit'} Payment</title>
+    </h:head>
+    <h:body>
+        <f:metadata>
+            <f:viewParam name="id" value="#{paymentController.currentEntityId}"/>
+            <f:viewParam name="customer" value="#{paymentController.currentEntityCustomerId}"/>
+            <f:event type="preValidate" listener="#{paymentController.initCurrentEntity}"/>
+            <f:event type="postValidate" listener="#{paymentController.postValidate}"/>
+            <f:viewAction action="#{paymentController.initCurrentEntity}"/>
+        </f:metadata>
+        
+        <f:view beforePhase="#{forceRenderActionSourceListener.forceRenderActionSource}"
+                afterPhase="#{forceRenderActionSourceListener.forceRenderActionSourceReset}">
+            <o:form id="form" includeRequestParams="true">
+                <h1>#{empty paymentController.currentEntity.id ? 'Create' : 'Edit'} Payment</h1>
+                <h:messages/>
+                
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Id:" for="id"
+                                   rendered="#{not empty paymentController.currentEntity.id}"/>
+                    <h:outputText id="id" value="#{paymentController.currentEntity.id}" title="Id"
+                                  rendered="#{not empty paymentController.currentEntity.id}"/>
+                    <h:outputLabel value="Amount: *" for="amount" />
+                    <h:inputText id="amount" value="#{paymentController.currentEntity.amount}" title="Amount" required="true"/>
+                    <h:outputLabel value="Date:" for="date" />
+                    <h:inputText id="date" value="#{paymentController.currentEntity.date}" title="Date" >
+                        <f:convertDateTime pattern="MM/dd/yyyy" />
+                    </h:inputText>
+                </h:panelGrid>
+
+                <h:commandButton value="Save" action="#{paymentController.save(paymentController.currentEntity)}"/>
+                <h:commandButton value="Delete" action="#{paymentController.delete}" immediate="true"
+                                 rendered="#{not empty paymentController.currentEntity.id}">
+                    <f:param name="deleteId" value="#{paymentController.currentEntity.id}"/>
+                    <f:param name="customer" value="#{paymentController.currentEntity.customer.id}" disable="#{not empty paymentController.currentEntity.id}"/>
+                </h:commandButton>
+                <h:button value="Reset" outcome="edit.xhtml" rendered="#{empty paymentController.currentEntity.id}">
+                    <f:param name="customer" value="#{paymentController.currentEntity.customer.id}"/>
+                </h:button>
+                <h:button value="Reset" outcome="edit.xhtml" rendered="#{not empty paymentController.currentEntity.id}">
+                    <f:param name="id" value="#{paymentController.currentEntity.id}"/>
+                    <f:param name="customer" value="#{paymentController.currentEntity.customer.id}"/>
+                </h:button>
+                <h:button value="Cancel" outcome="/pages/payments/list.xhtml">
+                    <f:param name="customer" value="#{paymentController.currentEntity.customer.id}"/>
+                </h:button>
+            </o:form>
+        </f:view>
+
+    </h:body>
+</html>
+
