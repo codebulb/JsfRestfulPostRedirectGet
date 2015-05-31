@@ -31,7 +31,8 @@ public class Customer implements Serializable, Identifiable {
     private EmploymentStatus employmentStatus = EmploymentStatus.Unemployed;
     private String companyName;
     
-    @OneToMany(mappedBy = "customer", orphanRemoval = true, cascade = CascadeType.ALL)
+    // We don't cascade as child entities live independent of their parent
+    @OneToMany(mappedBy = "customer", orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
     
     public Customer() {}
